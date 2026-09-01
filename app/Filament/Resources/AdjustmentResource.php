@@ -8,6 +8,7 @@ use App\Models\TransactionHeader;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -129,6 +130,8 @@ class AdjustmentResource extends Resource
                     ->relationship('warehouse', 'warehouse_name'),
             ])
             ->actions([
+                ViewAction::make(),
+
                 EditAction::make()
                     ->hidden(fn (TransactionHeader $record) => $record->status === 'P' || $record->isPeriodLocked()),
 
@@ -143,7 +146,7 @@ class AdjustmentResource extends Resource
                     }),
 
                 DeleteAction::make()
-                    ->hidden(fn (TransactionHeader $record) => $record->status === 'P' || $record->isPeriodLocked())
+                    ->hidden(fn (TransactionHeader $record) => $record->status === 'P' || $record::isPeriodLocked())
                     ->action(fn (TransactionHeader $record) => $record->update(['status' => 'X'])),
             ]);
     }
@@ -153,6 +156,7 @@ class AdjustmentResource extends Resource
         return [
             'index' => Pages\ListAdjustments::route('/'),
             'create' => Pages\CreateAdjustment::route('/create'),
+            'view' => Pages\ViewAdjustment::route('/{record}'),
             'edit' => Pages\EditAdjustment::route('/{record}/edit'),
         ];
     }

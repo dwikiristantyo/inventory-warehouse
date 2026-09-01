@@ -8,6 +8,7 @@ use App\Models\TransactionHeader;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -131,6 +132,8 @@ class GoodsInResource extends Resource
                     ->relationship('warehouse', 'warehouse_name'),
             ])
             ->actions([
+                ViewAction::make(),
+
                 EditAction::make()
                     ->hidden(fn (TransactionHeader $record) => $record->status === 'P' || $record->isPeriodLocked()),
 
@@ -155,6 +158,7 @@ class GoodsInResource extends Resource
         return [
             'index' => Pages\ListGoodsIns::route('/'),
             'create' => Pages\CreateGoodsIn::route('/create'),
+            'view' => Pages\ViewGoodsIn::route('/{record}'),
             'edit' => Pages\EditGoodsIn::route('/{record}/edit'),
         ];
     }

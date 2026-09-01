@@ -4,6 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\LockPeriodResource\Pages;
 use App\Models\LockPeriod;
+use BackedEnum;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -14,13 +17,12 @@ use UnitEnum;
 class LockPeriodResource extends Resource
 {
     protected static ?string $model = LockPeriod::class;
-    
-    // Konfigurasi Navigasi Side Menu
+
     protected static string|UnitEnum|null $navigationGroup = 'Menu Transaksi';
     protected static ?string $navigationLabel = 'Lock Period';
     protected static ?string $pluralModelLabel = 'Lock Period';
     protected static ?string $modelLabel = 'Lock Period';
-    protected static ?string $navigationIcon = 'heroicon-o-lock-closed';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-lock-closed';
 
     public static function form(Schema $schema): Schema
     {
@@ -118,8 +120,8 @@ class LockPeriodResource extends Resource
                     ->options(array_combine(range(date('Y') - 5, date('Y') + 5), range(date('Y') - 5, date('Y') + 5))),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ]);
     }
 
