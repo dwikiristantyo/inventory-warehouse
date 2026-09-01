@@ -2,18 +2,21 @@
 
 namespace App\Filament\Resources;
 
-use UnitEnum;
 use App\Filament\Resources\GoodsOutResource\Pages;
+use App\Models\Item;
 use App\Models\TransactionHeader;
-use Filament\Schemas\Schema;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Actions\Action;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Notifications\Notification;
+use UnitEnum;
 
 class GoodsOutResource extends Resource
 {
@@ -46,20 +49,45 @@ class GoodsOutResource extends Resource
                     ->schema([
                         Components\Select::make('item_code')
                             ->relationship('item', 'description')
-                            ->required(),
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(function ($state, Set $set) {
+                                if (! $state) {
+                                    $set('uom1_label', null);
+                                    $set('uom2_label', null);
+                                    return;
+                                }
+
+                                $item = Item::where('item_code', $state)->first();
+                                if ($item) {
+                                    $set('uom1_label', $item->uom1);
+                                    $set('uom2_label', $item->uom2);
+                                }
+                            }),
+
                         Components\TextInput::make('qty_uom1')
-                            ->label('Qty Box')
+                            ->label(function (Get $get) {
+                                $uom1 = $get('uom1_label');
+                                return $uom1 ? "Qty 1 ({$uom1})" : 'Qty 1';
+                            })
                             ->numeric()
                             ->default(0)
                             ->required(),
+
                         Components\TextInput::make('qty_uom2')
-                            ->label('Qty Pcs')
+                            ->label(function (Get $get) {
+                                $uom2 = $get('uom2_label');
+                                return $uom2 ? "Qty 2 ({$uom2})" : 'Qty 2';
+                            })
                             ->numeric()
                             ->default(0)
                             ->required(),
+
+                        Components\Hidden::make('uom1_label'),
+                        Components\Hidden::make('uom2_label'),
                     ])
                     ->columns(3)
-                    ->columnSpanFull()
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -98,17 +126,17 @@ class GoodsOutResource extends Resource
                             ->when($data['until'], fn ($q) => $q->whereDate('trans_date', '<=', $data['until']));
                     }),
                 Tables\Filters\SelectFilter::make('warehouseid')
-                    ->relationship('warehouse', 'warehouse_name')
+                    ->relationship('warehouse', 'warehouse_name'),
             ])
             ->actions([
                 EditAction::make()
                     ->hidden(fn (TransactionHeader $record) => $record->status === 'P' || $record->isPeriodLocked()),
-                
+
                 Action::make('unpost')
                     ->label('Un-Post')
                     ->color('warning')
                     ->icon('heroicon-o-arrow-path')
-                    ->visible(fn (TransactionHeader $record) => $record->status === 'P' && !$record->isPeriodLocked())
+                    ->visible(fn (TransactionHeader $record) => $record->status === 'P' && ! $record->isPeriodLocked())
                     ->action(function (TransactionHeader $record) {
                         $record->update(['status' => 'A']);
                         Notification::make()->title('Status berhasil diubah ke Aktif')->success()->send();
@@ -116,7 +144,7 @@ class GoodsOutResource extends Resource
 
                 DeleteAction::make()
                     ->hidden(fn (TransactionHeader $record) => $record->status === 'P' || $record->isPeriodLocked())
-                    ->action(fn (TransactionHeader $record) => $record->update(['status' => 'X']))
+                    ->action(fn (TransactionHeader $record) => $record->update(['status' => 'X'])),
             ]);
     }
 
