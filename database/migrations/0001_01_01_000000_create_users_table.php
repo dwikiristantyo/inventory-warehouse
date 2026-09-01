@@ -13,10 +13,14 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('nik')->nullable(); // Ditambahkan nullable agar tidak merusak perintah make:filament-user
+            $table->string('username')->nullable();
+            $table->string('name')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('status')->default('active');
+            $table->foreignId('usergroupid')->nullable(); // Foreign key ke user_groups jika ada
             $table->rememberToken();
             $table->timestamps();
         });
