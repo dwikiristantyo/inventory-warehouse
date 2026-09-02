@@ -11,11 +11,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\CheckboxList; // <-- Import CheckboxList
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 
 class UserGroupResource extends Resource
 {
@@ -37,14 +39,25 @@ class UserGroupResource extends Resource
                             ->maxLength(255),
                     ]),
 
+                // --- SECTION BARU: AKSES KATEGORI BARANG ---
+                Section::make('Hak Akses Kategori Barang')
+                    ->description('Pilih kategori barang yang diizinkan untuk diakses oleh grup ini.')
+                    ->schema([
+                        CheckboxList::make('categories')
+                            ->relationship('categories', 'category_name', fn ($query) => $query->where('status', 'active'))
+                            ->columns(3)
+                            ->bulkToggleable()
+                            ->label('Kategori Terdaftar'),
+                    ]),
+
                 Section::make('Hak Akses Menu (Detail Permission)')
                     ->schema([
                         Repeater::make('details')
-                            ->relationship('details') // Otomatis mengaitkan ke relasi HasMany 'details'
+                            ->relationship('details')
                             ->schema([
                                 Select::make('menu_id')
                                     ->label('Menu')
-                                    ->relationship('menu', 'name') // Sesuaikan 'name' dengan kolom nama di tabel menus
+                                    ->relationship('menu', 'name')
                                     ->required()
                                     ->distinct()
                                     ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
@@ -86,6 +99,10 @@ class UserGroupResource extends Resource
                     ->searchable()
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('categories_count')
+                    ->label('Jumlah Kategori')
+                    ->counts('categories'),
+
                 Tables\Columns\TextColumn::make('details_count')
                     ->label('Jumlah Akses Menu')
                     ->counts('details'),
@@ -96,6 +113,7 @@ class UserGroupResource extends Resource
                     ->sortable(),
             ])
             ->actions([
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ]);

@@ -146,7 +146,7 @@ class AdjustmentResource extends Resource
                     }),
 
                 DeleteAction::make()
-                    ->hidden(fn (TransactionHeader $record) => $record->status === 'P' || $record::isPeriodLocked())
+                    ->hidden(fn (TransactionHeader $record) => $record->status === 'P' || $record->isPeriodLocked())
                     ->action(fn (TransactionHeader $record) => $record->update(['status' => 'X'])),
             ]);
     }

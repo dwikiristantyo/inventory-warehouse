@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction; // <-- Import ViewAction
 
 class WarehouseResource extends Resource
 {
@@ -89,6 +90,7 @@ class WarehouseResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
+                ViewAction::make(), // <-- Menambahkan tombol View
                 EditAction::make(),
                 DeleteAction::make(),
             ]);
@@ -99,6 +101,7 @@ class WarehouseResource extends Resource
         return [
             'index' => Pages\ListWarehouses::route('/'),
             'create' => Pages\CreateWarehouse::route('/create'),
+            'view' => Pages\ViewWarehouse::route('/{record}'), // <-- Daftarkan route Halaman View
             'edit' => Pages\EditWarehouse::route('/{record}/edit'),
         ];
     }

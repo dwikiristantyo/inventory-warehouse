@@ -9,6 +9,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction; // <-- Import ViewAction
 use Filament\Forms\Components;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -111,6 +112,7 @@ class ItemResource extends Resource
                     ->label('Satuan 2'),
             ])
             ->actions([
+                ViewAction::make(), // <-- Tambahkan aksi View di tabel
                 EditAction::make(),
                 DeleteAction::make(),
             ])
@@ -126,6 +128,7 @@ class ItemResource extends Resource
         return [
             'index' => Pages\ListItems::route('/'),
             'create' => Pages\CreateItem::route('/create'),
+            'view' => Pages\ViewItem::route('/{record}'), // <-- Daftarkan route Halaman View
             'edit' => Pages\EditItem::route('/{record}/edit'),
         ];
     }

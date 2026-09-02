@@ -8,6 +8,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction; // <-- Import ViewAction
 use Filament\Forms\Components;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -85,6 +86,7 @@ class CategoryResource extends Resource
                     ]),
             ])
             ->actions([
+                ViewAction::make(), // <-- Menambahkan tombol View (Modal secara default)
                 EditAction::make(),
                 DeleteAction::make(),
             ])
@@ -100,6 +102,7 @@ class CategoryResource extends Resource
         return [
             'index' => Pages\ListCategories::route('/'),
             'create' => Pages\CreateCategory::route('/create'),
+            //'view' => Pages\ViewCategory::route('/{record}'), // <-- Route halaman View (jika menggunakan terpisah)
             'edit' => Pages\EditCategory::route('/{record}/edit'),
         ];
     }
