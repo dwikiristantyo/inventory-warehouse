@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use UnitEnum;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
+use App\Models\Company;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -15,6 +16,7 @@ use Filament\Tables\Table;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserResource extends Resource
 {
@@ -33,15 +35,19 @@ class UserResource extends Resource
                     ->schema([
                         TextInput::make('username')
                             ->label('Username')
+                            ->placeholder('Masukkan username')
+                            ->autocomplete(false)
                             ->required()
                             ->maxLength(255),
 
                         TextInput::make('nik')
                             ->label('NIK')
+                            ->placeholder('Masukkan NIK')
                             ->maxLength(50),
 
                         TextInput::make('email')
                             ->label('Email')
+                            ->placeholder('contoh@domain.com')
                             ->email()
                             ->required()
                             ->maxLength(255),
@@ -49,6 +55,7 @@ class UserResource extends Resource
                         TextInput::make('password')
                             ->label('Password')
                             ->password()
+                            ->autocomplete('new-password')
                             ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                             ->dehydrated(fn ($state) => filled($state))
                             ->required(fn (string $context): bool => $context === 'create'),
@@ -66,25 +73,43 @@ class UserResource extends Resource
                 Section::make('Hak Akses & Role')
                     ->columns(2)
                     ->schema([
-                        // Hak Akses Role / User Group (Single Select)
                         Select::make('usergroupid')
                             ->label('Role / User Group')
-                            ->relationship('userGroup', 'description') // Menggunakan kolom description dari tabel user_groups
+                            ->relationship('userGroup', 'description')
                             ->searchable()
                             ->preload(),
 
-                        // Akses Perusahaan (Multi Select)
                         Select::make('companies')
                             ->label('Akses Perusahaan')
-                            ->relationship('companies', 'company_name')
+                            ->relationship(
+                                name: 'companies',
+                                titleAttribute: 'company_name',
+                                // Menyeleksi companyid (PK), alias, company_name, dan business_line
+                                modifyQueryUsing: fn (Builder $query) => $query->select([
+                                    'companies.companyid', 
+                                    'companies.alias', 
+                                    'companies.company_name', 
+                                    'companies.business_line'
+                                ])
+                            )
+                            ->getOptionLabelFromRecordUsing(fn (Company $record) => "{$record->alias} - {$record->company_name} - {$record->business_line}")
+                            ->getSearchResultsUsing(function (string $search) {
+                                return Company::where('companies.alias', 'like', "%{$search}%")
+                                    ->orWhere('companies.company_name', 'like', "%{$search}%")
+                                    ->orWhere('companies.business_line', 'like', "%{$search}%")
+                                    ->limit(50)
+                                    ->get()
+                                    ->mapWithKeys(fn (Company $company) => [
+                                        $company->companyid => "{$company->alias} - {$company->company_name} - {$company->business_line}"
+                                    ]);
+                            })
                             ->multiple()
                             ->preload()
                             ->searchable(),
 
-                        // Akses Warehouse (Multi Select)
                         Select::make('warehouses')
                             ->label('Akses Gudang / Warehouse')
-                            ->relationship('warehouses', 'warehouse_name') // sesuaikan dengan kolom nama warehouse di tabel warehouses
+                            ->relationship('warehouses', 'warehouse_name')
                             ->multiple()
                             ->preload()
                             ->searchable()

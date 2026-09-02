@@ -1,91 +1,166 @@
 <x-filament-panels::page>
     <style>
-        .wh-grid { display: grid; grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 1rem; }
-        @media (min-width: 768px) { .wh-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-        .wh-card { background-color: #1f2937; border: 1px solid #374151; border-radius: 0.75rem; padding: 1.5rem; color: #fff; }
-        .wh-title { font-size: 0.875rem; color: #9ca3af; font-weight: 500; }
-        .wh-value { font-size: 1.875rem; font-weight: 700; margin-top: 0.5rem; }
-        .wh-table { width: 100%; text-align: left; font-size: 0.875rem; border-collapse: collapse; }
-        .wh-table th { background-color: #374151; padding: 0.75rem 1rem; text-transform: uppercase; font-size: 0.75rem; color: #d1d5db; }
-        .wh-table td { padding: 0.75rem 1rem; border-bottom: 1px solid #374151; }
-        .wh-badge { display: inline-flex; padding: 0.25rem 0.5rem; font-size: 0.75rem; font-weight: 600; border-radius: 0.375rem; background-color: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .profile-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .avatar-circle {
+            width: 3.25rem;
+            height: 3.25rem;
+            border-radius: 9999px;
+            background-color: #18181b;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: 1.25rem;
+            margin-top: 1.25rem;
+        }
+        @media (min-width: 640px) {
+            .info-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        .info-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #6b7280;
+            margin-bottom: 0.375rem;
+            letter-spacing: 0.05em;
+        }
+        .info-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #111827;
+        }
+        .chip-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.375rem;
+        }
+        .chip-item {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.625rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background-color: #f3f4f6;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+        }
+        .badge-role {
+            display: inline-flex;
+            padding: 0.25rem 0.625rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            background-color: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+        }
+        .btn-signout {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+            background-color: #ffffff;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-signout:hover {
+            background-color: #f9fafb;
+        }
     </style>
 
-    <div style="display: flex; flex-direction: column; gap: 1.5rem; max-width: 100%;">
-        
-        <!-- Section Top Cards Stats -->
-        <div class="wh-grid">
-            <div class="wh-card">
-                <div class="wh-title">Total Gudang</div>
-                <div class="wh-value">
-                    {{ number_format($stats['total_warehouses'] ?? 0) }}
+    @php
+        $user = auth()->user();
+        $userGroup = $user->userGroup->description ?? '-';
+        $companies = $user->companies ?? collect();
+        $warehouses = $user->warehouses ?? collect();
+    @endphp
+
+    <div class="profile-card">
+        <!-- Header Welcome & Sign Out -->
+        <div class="profile-header">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div class="avatar-circle">
+                    {{ strtoupper(substr($user->username ?? 'U', 0, 1)) }}
+                </div>
+                <div>
+                    <div style="font-size: 1.25rem; font-weight: 700; color: #111827;">Welcome</div>
+                    <div style="font-size: 0.95rem; color: #6b7280; font-weight: 500;">
+                        {{ $user->username ?? 'User' }}
+                    </div>
                 </div>
             </div>
 
-            <div class="wh-card">
-                <div class="wh-title">Total Item Barang</div>
-                <div class="wh-value">
-                    {{ number_format($stats['total_items'] ?? 0) }}
+            <!-- Tombol Logout -->
+            <form method="POST" action="{{ route('filament.admin.auth.logout') }}">
+                @csrf
+                <button type="submit" class="btn-signout">
+                    <svg style="width: 1.25rem; height: 1.25rem; color: #4b5563;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Sign out
+                </button>
+            </form>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="info-grid">
+            <div>
+                <div class="info-label">NIK</div>
+                <div class="info-value">{{ $user->nik ?? '-' }}</div>
+            </div>
+
+            <div>
+                <div class="info-label">Role</div>
+                <div><span class="badge-role">{{ $userGroup }}</span></div>
+            </div>
+
+            <div>
+                <div class="info-label">Akses Perusahaan</div>
+                <div class="chip-container">
+                    @forelse($companies as $company)
+                        <span class="chip-item">{{ $company->alias ?? $company->company_name }}</span>
+                    @empty
+                        <span class="info-value" style="color: #9ca3af;">- Tidak ada akses -</span>
+                    @endforelse
                 </div>
             </div>
 
-            <div class="wh-card">
-                <div class="wh-title">Total Transaksi</div>
-                <div class="wh-value">
-                    {{ number_format($stats['total_transactions'] ?? 0) }}
+            <div>
+                <div class="info-label">Akses Gudang</div>
+                <div class="chip-container">
+                    @forelse($warehouses as $warehouse)
+                        <span class="chip-item">{{ $warehouse->warehouse_name }}</span>
+                    @empty
+                        <span class="info-value" style="color: #9ca3af;">- Tidak ada akses -</span>
+                    @endforelse
                 </div>
             </div>
         </div>
-
-        <!-- Section Table 5 Gudang Terbaru -->
-        <div class="wh-card">
-            <h3 style="font-size: 1rem; font-weight: 600; margin-top: 0; margin-bottom: 1rem;">
-                5 Gudang Terbaru
-            </h3>
-
-            <div style="overflow-x: auto;">
-                <table class="wh-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nama Gudang</th>
-                            <th>Perusahaan</th>
-                            <th>Telepon</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($stats['latest_warehouses'] ?? [] as $warehouse)
-                            <tr>
-                                <td style="font-weight: 500;">
-                                    {{ $warehouse->warehouseid }}
-                                </td>
-                                <td style="font-weight: 700;">
-                                    {{ $warehouse->warehouse_name }}
-                                </td>
-                                <td>
-                                    {{ $warehouse->company->company_name ?? '-' }}
-                                </td>
-                                <td>
-                                    {{ $warehouse->phone ?? '-' }}
-                                </td>
-                                <td>
-                                    <span class="wh-badge">
-                                        {{ strtoupper($warehouse->status) }}
-                                    </span>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" style="text-align: center; color: #9ca3af;">
-                                    Belum ada data gudang.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
     </div>
 </x-filament-panels::page>
