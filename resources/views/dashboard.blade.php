@@ -92,6 +92,11 @@
         .btn-signout:hover {
             background-color: #f9fafb;
         }
+        .action-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
     </style>
 
     @php
@@ -102,7 +107,7 @@
     @endphp
 
     <div class="profile-card">
-        <!-- Header Welcome & Sign Out -->
+        <!-- Header Welcome & Actions -->
         <div class="profile-header">
             <div style="display: flex; align-items: center; gap: 1rem;">
                 <div class="avatar-circle">
@@ -116,16 +121,21 @@
                 </div>
             </div>
 
-            <!-- Tombol Logout -->
-            <form method="POST" action="{{ route('filament.admin.auth.logout') }}">
-                @csrf
-                <button type="submit" class="btn-signout">
-                    <svg style="width: 1.25rem; height: 1.25rem; color: #4b5563;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    Sign out
-                </button>
-            </form>
+            <div class="action-group">
+                <!-- Tombol Change Password (Filament Action Modal) -->
+                {{ $this->changePasswordAction }}
+
+                <!-- Tombol Logout -->
+                <form method="POST" action="{{ route('filament.admin.auth.logout') }}">
+                    @csrf
+                    <button type="submit" class="btn-signout">
+                        <svg style="width: 1.25rem; height: 1.25rem; color: #4b5563;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Sign out
+                    </button>
+                </form>
+            </div>
         </div>
 
         <!-- Details Grid -->
@@ -163,4 +173,7 @@
             </div>
         </div>
     </div>
+
+    <!-- Render Modal untuk Filament Actions -->
+    <x-filament-actions::modals />
 </x-filament-panels::page>

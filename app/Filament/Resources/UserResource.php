@@ -26,6 +26,73 @@ class UserResource extends Resource
     protected static ?string $modelLabel = 'Pengguna';
     protected static ?string $pluralModelLabel = 'Pengguna';
 
+    /**
+     * ID Menu untuk resource ini di tabel `menus`
+     */
+    protected static int|string $menuId = 8; // Sesuaikan dengan ID menu 'Pengguna' pada database (misal: 8)
+
+    /**
+     * Otorisasi Menampilkan Menu di Sidebar & Mengakses Halaman List
+     */
+    public static function canViewAny(): bool
+    {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        return $user ? $user->hasMenuAccess(static::$menuId) : false;
+    }
+
+    /**
+     * Otorisasi Menambah Data (Tombol Create)
+     */
+    public static function canCreate(): bool
+    {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        if (!$user) return false;
+        if ($user->usergroupid === 1) return true;
+
+        return $user->groupDetails()
+            ->where('menu_id', (string) static::$menuId)
+            ->where('can_add', true)
+            ->exists();
+    }
+
+    /**
+     * Otorisasi Mengedit Data (Tombol Edit)
+     */
+    public static function canEdit($record): bool
+    {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        if (!$user) return false;
+        if ($user->usergroupid === 1) return true;
+
+        return $user->groupDetails()
+            ->where('menu_id', (string) static::$menuId)
+            ->where('can_edit', true)
+            ->exists();
+    }
+
+    /**
+     * Otorisasi Menghapus Data (Tombol Delete)
+     */
+    public static function canDelete($record): bool
+    {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        if (!$user) return false;
+        if ($user->usergroupid === 1) return true;
+
+        return $user->groupDetails()
+            ->where('menu_id', (string) static::$menuId)
+            ->where('can_delete', true)
+            ->exists();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -84,7 +151,6 @@ class UserResource extends Resource
                             ->relationship(
                                 name: 'companies',
                                 titleAttribute: 'company_name',
-                                // Menyeleksi companyid (PK), alias, company_name, dan business_line
                                 modifyQueryUsing: fn (Builder $query) => $query->select([
                                     'companies.companyid', 
                                     'companies.alias', 

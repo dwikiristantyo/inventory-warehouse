@@ -6,6 +6,7 @@ use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -32,22 +33,40 @@ class User extends Authenticatable implements HasName
         return $this->username ?? $this->nik ?? 'User';
     }
 
-    /**
-     * Relasi ke UserGroup (Role)
-     */
     public function userGroup(): BelongsTo
     {
         return $this->belongsTo(UserGroup::class, 'usergroupid', 'usergroupid');
     }
 
     /**
-     * Relasi ke model Company (Tabel pivot: user_companies)
+     * Relasi ke UserGroupDetail
      */
+    public function groupDetails(): HasMany
+    {
+        return $this->hasMany(UserGroupDetail::class, 'usergroupid', 'usergroupid');
+    }
+
+    /**
+     * Helper untuk mengecek permission view berdasarkan ID / Nama Menu
+     */
+    public function hasMenuAccess(int|string $menuId): bool
+    {
+        // Bypass jika Super Admin (misal usergroupid 1)
+        if ($this->usergroupid === 1) {
+            return true;
+        }
+
+        return $this->groupDetails()
+            ->where('menu_id', (string) $menuId)
+            ->where('can_view', true)
+            ->exists();
+    }
+
     public function companies(): BelongsToMany
     {
         return $this->belongsToMany(
             Company::class,
-            'user_companies', // Nama tabel pivot sesuai pgAdmin
+            'user_companies',
             'user_id',
             'companyid',
             'id',
@@ -55,18 +74,15 @@ class User extends Authenticatable implements HasName
         );
     }
 
-    /**
-     * Relasi ke model Warehouse (Tabel pivot: user_warehouse)
-     */
     public function warehouses(): BelongsToMany
     {
         return $this->belongsToMany(
             Warehouse::class,
-            'user_warehouse', // Nama tabel pivot sesuai pgAdmin
+            'user_warehouse',
             'user_id',
-            'warehouseid',    // Kolom foreign key di user_warehouse
+            'warehouseid',
             'id',
-            'warehouseid'     // Sesuaikan dengan primary key di tabel warehouses (warehouseid / id)
+            'warehouseid'
         );
     }
 }
