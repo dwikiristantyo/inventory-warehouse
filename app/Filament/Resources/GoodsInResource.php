@@ -162,4 +162,10 @@ class GoodsInResource extends Resource
             'edit' => Pages\EditGoodsIn::route('/{record}/edit'),
         ];
     }
+    public static function canViewAny(): bool
+{
+    /** @var \App\Models\User $user */
+    $user = auth()->user();
+    return $user ? $user->hasMenuAccess(4) : false; // Ganti '2' sesuai menu_id Barang Masuk
+}
 }

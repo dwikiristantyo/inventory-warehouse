@@ -106,4 +106,10 @@ class CategoryResource extends Resource
             'edit' => Pages\EditCategory::route('/{record}/edit'),
         ];
     }
+    public static function canViewAny(): bool
+{
+    /** @var \App\Models\User $user */
+    $user = auth()->user();
+    return $user ? $user->hasMenuAccess(7) : false; // Ganti '5' sesuai menu_id Kategori
+}
 }

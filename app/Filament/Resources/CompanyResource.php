@@ -81,4 +81,10 @@ class CompanyResource extends Resource
             'edit' => Pages\EditCompany::route('/{record}/edit'),
         ];
     }
+    public static function canViewAny(): bool
+{
+    /** @var \App\Models\User $user */
+    $user = auth()->user();
+    return $user ? $user->hasMenuAccess(10) : false; // Ganti '8' sesuai menu_id Perusahaan
+}
 }

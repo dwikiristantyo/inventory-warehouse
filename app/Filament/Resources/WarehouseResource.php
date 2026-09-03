@@ -105,4 +105,10 @@ class WarehouseResource extends Resource
             'edit' => Pages\EditWarehouse::route('/{record}/edit'),
         ];
     }
+    public static function canViewAny(): bool
+{
+    /** @var \App\Models\User $user */
+    $user = auth()->user();
+    return $user ? $user->hasMenuAccess(9) : false; // Ganti '7' sesuai menu_id Gudang
+}
 }

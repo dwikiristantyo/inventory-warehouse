@@ -160,4 +160,10 @@ class GoodsOutResource extends Resource
             'edit' => Pages\EditGoodsOut::route('/{record}/edit'),
         ];
     }
+    public static function canViewAny(): bool
+{
+    /** @var \App\Models\User $user */
+    $user = auth()->user();
+    return $user ? $user->hasMenuAccess(5) : false; // Ganti '3' sesuai menu_id Barang Keluar
+}
 }

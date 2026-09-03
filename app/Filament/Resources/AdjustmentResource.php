@@ -160,4 +160,10 @@ class AdjustmentResource extends Resource
             'edit' => Pages\EditAdjustment::route('/{record}/edit'),
         ];
     }
+    public static function canViewAny(): bool
+{
+    /** @var \App\Models\User $user */
+    $user = auth()->user();
+    return $user ? $user->hasMenuAccess(3) : false; // Ganti '1' sesuai menu_id Adjustment
+}
 }

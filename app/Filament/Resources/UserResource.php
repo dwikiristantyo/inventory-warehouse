@@ -7,7 +7,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
 use App\Models\Company;
 use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Resource;
@@ -29,7 +29,7 @@ class UserResource extends Resource
     /**
      * ID Menu untuk resource ini di tabel `menus`
      */
-    protected static int|string $menuId = 8; // Sesuaikan dengan ID menu 'Pengguna' pada database (misal: 8)
+    protected static int|string $menuId = 12;
 
     /**
      * Otorisasi Menampilkan Menu di Sidebar & Mengakses Halaman List
@@ -51,7 +51,7 @@ class UserResource extends Resource
         $user = auth()->user();
 
         if (!$user) return false;
-        if ($user->usergroupid === 1) return true;
+        if ((int) $user->usergroupid === 1) return true;
 
         return $user->groupDetails()
             ->where('menu_id', (string) static::$menuId)
@@ -68,7 +68,7 @@ class UserResource extends Resource
         $user = auth()->user();
 
         if (!$user) return false;
-        if ($user->usergroupid === 1) return true;
+        if ((int) $user->usergroupid === 1) return true;
 
         return $user->groupDetails()
             ->where('menu_id', (string) static::$menuId)
@@ -85,7 +85,7 @@ class UserResource extends Resource
         $user = auth()->user();
 
         if (!$user) return false;
-        if ($user->usergroupid === 1) return true;
+        if ((int) $user->usergroupid === 1) return true;
 
         return $user->groupDetails()
             ->where('menu_id', (string) static::$menuId)

@@ -133,4 +133,10 @@ class LockPeriodResource extends Resource
             'edit' => Pages\EditLockPeriod::route('/{record}/edit'),
         ];
     }
+    public static function canViewAny(): bool
+{
+    /** @var \App\Models\User $user */
+    $user = auth()->user();
+    return $user ? $user->hasMenuAccess(6) : false; // Ganti '4' sesuai menu_id Lock Period
+}
 }

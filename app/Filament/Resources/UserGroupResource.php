@@ -127,4 +127,10 @@ class UserGroupResource extends Resource
             'edit' => Pages\EditUserGroup::route('/{record}/edit'),
         ];
     }
+    public static function canViewAny(): bool
+{
+    /** @var \App\Models\User $user */
+    $user = auth()->user();
+    return $user ? $user->hasMenuAccess(11) : false; // Ganti '9' sesuai menu_id Grup Pengguna
+}
 }

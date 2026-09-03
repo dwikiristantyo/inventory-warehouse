@@ -9,7 +9,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction; // <-- Import ViewAction
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -29,10 +29,27 @@ class ItemResource extends Resource
     {
         return $schema
             ->components([
-                // 1. Kategori ditaruh paling awal & reactive untuk mentrigger auto-generate kode
+                // 1. Kategori dipasangi filter hak akses sesuai usergroup & reactive
                 Components\Select::make('category_code')
                     ->label('Kategori')
-                    ->options(Category::pluck('category_name', 'category_code'))
+                    ->options(function () {
+                        /** @var \App\Models\User $user */
+                        $user = auth()->user();
+
+                        if (! $user) {
+                            return [];
+                        }
+
+                        // Jika Superadmin (usergroupid === 1), tampilkan semua kategori
+                        if ((int) $user->usergroupid === 1) {
+                            return Category::pluck('category_name', 'category_code');
+                        }
+
+                        // Tampilkan hanya kategori yang terhubung ke usergroup user login
+                        return Category::whereHas('userGroups', function ($query) use ($user) {
+                            $query->where('user_groups.usergroupid', $user->usergroupid);
+                        })->pluck('category_name', 'category_code');
+                    })
                     ->required()
                     ->live()
                     ->afterStateUpdated(function ($state, callable $set) {
@@ -112,7 +129,7 @@ class ItemResource extends Resource
                     ->label('Satuan 2'),
             ])
             ->actions([
-                ViewAction::make(), // <-- Tambahkan aksi View di tabel
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
@@ -128,8 +145,16 @@ class ItemResource extends Resource
         return [
             'index' => Pages\ListItems::route('/'),
             'create' => Pages\CreateItem::route('/create'),
-            'view' => Pages\ViewItem::route('/{record}'), // <-- Daftarkan route Halaman View
+            'view' => Pages\ViewItem::route('/{record}'),
             'edit' => Pages\EditItem::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        return $user ? $user->hasMenuAccess(8) : false;
     }
 }
