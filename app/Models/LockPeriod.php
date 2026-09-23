@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class LockPeriod extends Model
 {
@@ -25,6 +26,38 @@ class LockPeriod extends Model
         'month' => 'integer',
         'is_locked' => 'boolean',
     ];
+
+    /**
+     * Boot function untuk menangani event pencatatan & update status transaksi
+     */
+    protected static function booted(): void
+    {
+        static::saved(function (LockPeriod $lockPeriod) {
+            if ($lockPeriod->is_locked) {
+                // Jika periode di-LOCK: Ubah semua status transaksi aktif ('A') menjadi Posted ('P')
+                DB::table('transaction_headers')
+                    ->where('warehouseid', $lockPeriod->warehouseid)
+                    ->whereYear('trans_date', $lockPeriod->year)
+                    ->whereMonth('trans_date', $lockPeriod->month)
+                    ->where('status', 'A')
+                    ->update([
+                        'status' => 'P',
+                        'updated_at' => now(),
+                    ]);
+            } else {
+                // Jika periode di-UNLOCK: Kembalikan status transaksi Posted ('P') menjadi Active ('A')
+                DB::table('transaction_headers')
+                    ->where('warehouseid', $lockPeriod->warehouseid)
+                    ->whereYear('trans_date', $lockPeriod->year)
+                    ->whereMonth('trans_date', $lockPeriod->month)
+                    ->where('status', 'P')
+                    ->update([
+                        'status' => 'A',
+                        'updated_at' => now(),
+                    ]);
+            }
+        });
+    }
 
     /**
      * Relasi ke Warehouse (BelongsTo)
