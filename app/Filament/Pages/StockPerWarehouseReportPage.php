@@ -18,9 +18,9 @@ class StockPerWarehouseReportPage extends Page implements HasForms
     use InteractsWithForms;
 
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-archive-box';
-    protected static string|UnitEnum|null $navigationGroup = 'Laporan & Analytics';
-    protected static ?string $navigationLabel = 'Report Stock per Gudang';
-    protected static ?string $title = 'REPORT STOCK PER GUDANG';
+    protected static string|UnitEnum|null $navigationGroup = 'Reports & Analytics';
+    protected static ?string $navigationLabel = 'Report Stock Warehouse';
+    protected static ?string $title = 'REPORT STOCK PER WAREHOUSE';
 
     protected string $view = 'filament.pages.stock-per-warehouse-report-page';
 

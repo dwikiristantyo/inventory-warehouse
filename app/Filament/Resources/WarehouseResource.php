@@ -18,10 +18,10 @@ use Filament\Actions\ViewAction; // <-- Import ViewAction
 class WarehouseResource extends Resource
 {
     protected static ?string $model = Warehouse::class;
-    protected static string|UnitEnum|null $navigationGroup = 'Master Data';
-    protected static ?string $navigationLabel = 'Gudang';
-    protected static ?string $pluralModelLabel = 'Gudang';
-    protected static ?string $modelLabel = 'Gudang';
+    protected static string|UnitEnum|null $navigationGroup = 'Master';
+    protected static ?string $navigationLabel = 'Warehouse';
+    protected static ?string $pluralModelLabel = 'Warehouse';
+    protected static ?string $modelLabel = 'Warehouse';
 
     public static function form(Schema $schema): Schema
     {

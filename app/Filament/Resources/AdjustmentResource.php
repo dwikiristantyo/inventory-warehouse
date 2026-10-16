@@ -22,7 +22,7 @@ use UnitEnum;
 class AdjustmentResource extends Resource
 {
     protected static ?string $model = TransactionHeader::class;
-    protected static string|UnitEnum|null $navigationGroup = 'Menu Transaksi';
+    protected static string|UnitEnum|null $navigationGroup = 'Transaction';
     protected static ?string $navigationLabel = 'Adjustment';
     protected static ?string $pluralModelLabel = 'Adjustment';
     protected static ?string $modelLabel = 'Adjustment';

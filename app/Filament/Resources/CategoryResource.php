@@ -19,10 +19,10 @@ use UnitEnum;
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
-    protected static string|UnitEnum|null $navigationGroup = 'Master Data';
-    protected static ?string $navigationLabel = 'Kategori';
-    protected static ?string $pluralModelLabel = 'Kategori';
-    protected static ?string $modelLabel = 'Kategori';
+    protected static string|UnitEnum|null $navigationGroup = 'Master';
+    protected static ?string $navigationLabel = 'Category';
+    protected static ?string $pluralModelLabel = 'Category';
+    protected static ?string $modelLabel = 'Category';
 
     public static function form(Schema $schema): Schema
     {

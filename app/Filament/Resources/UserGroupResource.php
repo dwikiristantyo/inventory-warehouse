@@ -22,10 +22,10 @@ use Filament\Actions\ViewAction;
 class UserGroupResource extends Resource
 {
     protected static ?string $model = UserGroup::class;
-    protected static string|UnitEnum|null $navigationGroup = 'Pengaturan System';
-    protected static ?string $navigationLabel = 'Grup Pengguna';
-    protected static ?string $modelLabel = 'Grup Pengguna';
-    protected static ?string $pluralModelLabel = 'Grup Pengguna';
+    protected static string|UnitEnum|null $navigationGroup = 'System Setup';
+    protected static ?string $navigationLabel = 'User Group';
+    protected static ?string $modelLabel = 'User Group';
+    protected static ?string $pluralModelLabel = 'User Groups';
 
     public static function form(Schema $schema): Schema
     {

@@ -1,4 +1,54 @@
 <x-filament-panels::page>
+    <style>
+        /* Rule Khusus Mode Print */
+        @media print {
+            /* 1. Sembunyikan elemen UI Filament, navigasi, dan Form Filter */
+            .fi-sidebar,
+            .fi-topbar,
+            .fi-header,
+            .fi-btn,
+            .fi-breadcrumbs,
+            form,
+            nav,
+            aside,
+            header {
+                display: none !important;
+            }
+
+            /* 2. Reset layout kontainer utama agar tidak terpotong */
+            body, 
+            .fi-main,
+            .fi-layout,
+            .fi-page,
+            .fi-content,
+            .fi-body {
+                background: #ffffff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-shadow: none !important;
+            }
+
+            /* 3. Atur orientasi cetak dan paksa warna latar belakang header tabel tercetak */
+            @page {
+                size: landscape; /* Opsi landscape agar tabel lebar tercetak rapi */
+                margin: 1cm;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* 4. Mencegah blok tabel terpotong secara tidak rapi di tengah halaman */
+            .space-y-2 {
+                page-break-inside: avoid;
+                margin-bottom: 1.5rem !important;
+            }
+        }
+    </style>
+
     <form wire:submit="filterReport" class="space-y-6">
         {{ $this->form }}
 

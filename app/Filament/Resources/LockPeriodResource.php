@@ -18,7 +18,7 @@ class LockPeriodResource extends Resource
 {
     protected static ?string $model = LockPeriod::class;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Menu Transaksi';
+    protected static string|UnitEnum|null $navigationGroup = 'Transaction';
     protected static ?string $navigationLabel = 'Lock Period';
     protected static ?string $pluralModelLabel = 'Lock Period';
     protected static ?string $modelLabel = 'Lock Period';

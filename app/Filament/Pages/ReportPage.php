@@ -19,9 +19,9 @@ class ReportPage extends Page implements HasForms
     use InteractsWithForms;
 
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-document-chart-bar';
-    protected static string|UnitEnum|null $navigationGroup = 'Laporan & Analytics';
-    protected static ?string $navigationLabel = 'Laporan Transaksi';
-    protected static ?string $title = 'Laporan Mutasi Stok Detail';
+    protected static string|UnitEnum|null $navigationGroup = 'Reports & Analytics';
+    protected static ?string $navigationLabel = 'Transaction Report';
+    protected static ?string $title = 'Stock Mutation Report';
 
     protected string $view = 'filament.pages.report-page';
 

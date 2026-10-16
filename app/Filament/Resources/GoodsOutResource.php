@@ -22,10 +22,10 @@ use UnitEnum;
 class GoodsOutResource extends Resource
 {
     protected static ?string $model = TransactionHeader::class;
-    protected static string|UnitEnum|null $navigationGroup = 'Menu Transaksi';
-    protected static ?string $navigationLabel = 'Barang Keluar';
-    protected static ?string $pluralModelLabel = 'Barang Keluar';
-    protected static ?string $modelLabel = 'Barang Keluar';
+    protected static string|UnitEnum|null $navigationGroup = 'Transaction';
+    protected static ?string $navigationLabel = 'Goods Out';
+    protected static ?string $pluralModelLabel = 'Goods Out';
+    protected static ?string $modelLabel = 'Goods Out';
 
     public static function form(Schema $schema): Schema
     {

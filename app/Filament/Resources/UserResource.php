@@ -21,10 +21,10 @@ use Illuminate\Database\Eloquent\Builder;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-    protected static string|UnitEnum|null $navigationGroup = 'Pengaturan System';
-    protected static ?string $navigationLabel = 'Pengguna';
-    protected static ?string $modelLabel = 'Pengguna';
-    protected static ?string $pluralModelLabel = 'Pengguna';
+    protected static string|UnitEnum|null $navigationGroup = 'System Setup';
+    protected static ?string $navigationLabel = 'User';
+    protected static ?string $modelLabel = 'User';
+    protected static ?string $pluralModelLabel = 'Users';
 
     /**
      * ID Menu untuk resource ini di tabel `menus`

@@ -1,19 +1,5 @@
 <x-filament-panels::page>
-    <form wire:submit="filterReport" class="space-y-4 print:hidden">
-        {{ $this->form }}
-
-        <div class="flex gap-3">
-            <x-filament::button type="submit" icon="heroicon-m-magnifying-glass">
-                Preview
-            </x-filament::button>
-
-            <x-filament::button color="gray" icon="heroicon-m-printer" onclick="window.print()">
-                Print
-            </x-filament::button>
-        </div>
-    </form>
-
-    <!-- Style Khusus Mengikuti Desain Gambar 2 -->
+    <!-- Style Khusus Mengikuti Desain dan Mode Cetak (Print) -->
     <style>
         .report-wrapper {
             background-color: #ffffff;
@@ -34,13 +20,13 @@
             width: 100%;
             border-collapse: collapse !important;
             border: 1px solid #000000 !important;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .stock-table th, 
         .stock-table td {
             border: 1px solid #000000 !important;
-            padding: 5px 8px !important;
+            padding: 5px 6px !important;
             box-sizing: border-box;
         }
 
@@ -63,22 +49,83 @@
         .stock-table .text-right { text-align: right !important; }
         .stock-table .text-left { text-align: left !important; }
 
+        /* Aturan Cetak / Print */
         @media print {
+            /* 1. Sembunyikan elemen navigasi, topbar, sidebar, dan form filter */
+            .fi-sidebar,
+            .fi-topbar,
+            .fi-header,
+            .fi-btn,
+            .fi-breadcrumbs,
+            form,
+            nav,
+            aside,
+            header,
+            .print\:hidden {
+                display: none !important;
+            }
+
+            /* 2. Reset Layout Halaman Cetak */
+            body, 
+            .fi-main,
+            .fi-layout,
+            .fi-page,
+            .fi-content,
+            .fi-body {
+                background: #ffffff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-shadow: none !important;
+            }
+
+            /* 3. Pengaturan Orientasi Landscape dan Ukuran Cetak */
+            @page {
+                size: landscape;
+                margin: 1cm;
+            }
+
+            /* 4. Paksa Printer Mencetak Warna Latar Header Tabel */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
             .report-wrapper {
-                padding: 0;
+                padding: 0 !important;
+                margin-top: 0 !important;
+            }
+
+            .stock-table {
+                width: 100% !important;
             }
         }
     </style>
 
+    <form wire:submit="filterReport" class="space-y-4 print:hidden">
+        {{ $this->form }}
+
+        <div class="flex gap-3">
+            <x-filament::button type="submit" icon="heroicon-m-magnifying-glass">
+                Preview
+            </x-filament::button>
+
+            <x-filament::button color="gray" icon="heroicon-m-printer" onclick="window.print()">
+                Print
+            </x-filament::button>
+        </div>
+    </form>
+
     <div class="report-wrapper">
-        <!-- Info Atas -->
+        <!-- Info Atas Laporan -->
         <div class="report-header-info">
             <div style="font-size: 15px; text-transform: uppercase; margin-bottom: 4px;">REPORT STOCK PER GUDANG</div>
-            <div>Per Tanggal: {{ $selected_to_date }}</div>
-            <div>Nama Gudang: {{ $selected_warehouse_name }}</div>
+            <div>Per Tanggal: {{ $selected_to_date ? date('d/m/Y', strtotime($selected_to_date)) : '-' }}</div>
+            <div>Nama Gudang: {{ $selected_warehouse_name ?? '-' }}</div>
         </div>
 
-        <!-- Tabel Bergaris Hitam Lengkap -->
+        <!-- Tabel Stock Per Gudang -->
         <div style="overflow-x: auto;">
             <table class="stock-table">
                 <thead>

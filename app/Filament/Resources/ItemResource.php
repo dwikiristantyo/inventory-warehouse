@@ -20,10 +20,10 @@ use UnitEnum;
 class ItemResource extends Resource
 {
     protected static ?string $model = Item::class;
-    protected static string|UnitEnum|null $navigationGroup = 'Master Data';
-    protected static ?string $navigationLabel = 'Master Barang';
-    protected static ?string $pluralModelLabel = 'Barang';
-    protected static ?string $modelLabel = 'Barang';
+    protected static string|UnitEnum|null $navigationGroup = 'Master';
+    protected static ?string $navigationLabel = 'Item';
+    protected static ?string $pluralModelLabel = 'Item';
+    protected static ?string $modelLabel = 'Item';
 
     public static function form(Schema $schema): Schema
     {

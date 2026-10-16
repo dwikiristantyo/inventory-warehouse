@@ -16,10 +16,10 @@ use Filament\Actions\DeleteAction;
 class CompanyResource extends Resource
 {
     protected static ?string $model = Company::class;
-    protected static string|UnitEnum|null $navigationGroup = 'Pengaturan System';
-    protected static ?string $navigationLabel = 'Perusahaan';
-    protected static ?string $pluralModelLabel = 'Perusahaan';
-    protected static ?string $modelLabel = 'Perusahaan';
+    protected static string|UnitEnum|null $navigationGroup = 'System Setup';
+    protected static ?string $navigationLabel = 'Company';
+    protected static ?string $pluralModelLabel = 'Company';
+    protected static ?string $modelLabel = 'Company';
 
     public static function form(Schema $schema): Schema
     {
