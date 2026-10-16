@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Exports\ReportArrayExport;
 use App\Models\Warehouse;
 use BackedEnum;
 use Filament\Forms\Components\DatePicker;
@@ -10,6 +11,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
@@ -19,8 +21,8 @@ class StockPerWarehouseReportPage extends Page implements HasForms
 
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-archive-box';
     protected static string|UnitEnum|null $navigationGroup = 'Reports & Analytics';
-    protected static ?string $navigationLabel = 'Report Stock Warehouse';
-    protected static ?string $title = 'REPORT STOCK PER WAREHOUSE';
+    protected static ?string $navigationLabel = 'Egg Stock Report By Warehouse';
+    protected static ?string $title = 'Egg Stock Report By Warehouse';
 
     protected string $view = 'filament.pages.stock-per-warehouse-report-page';
 
@@ -28,6 +30,7 @@ class StockPerWarehouseReportPage extends Page implements HasForms
     public array $stock_report = [];
     public ?string $selected_warehouse_name = '';
     public ?string $selected_to_date = '';
+    public bool $hasSearched = false;
 
     public function mount(): void
     {
@@ -39,7 +42,6 @@ class StockPerWarehouseReportPage extends Page implements HasForms
             'filter_to'   => now()->toDateString(),
         ]);
 
-        $this->filterReport();
     }
 
     public function form(Schema $form): Schema
@@ -58,15 +60,17 @@ class StockPerWarehouseReportPage extends Page implements HasForms
                     ->label('Select Warehouse')
                     ->options(Warehouse::pluck('warehouse_name', 'warehouseid'))
                     ->required()
-                    ->native(false),
+                    ->native(false)
+                    ->columnSpanFull(),
             ])
-            ->columns(3)
+            ->columns(2)
             ->statePath('data');
     }
 
     public function filterReport(): void
     {
         $formData   = $this->form->getState();
+        $this->hasSearched = true;
         $filterWhid = $formData['filter_whid'] ?? null;
         $filterFrom = $formData['filter_from'] ?? now()->startOfMonth()->toDateString();
         $filterTo   = $formData['filter_to'] ?? now()->toDateString();
@@ -175,5 +179,34 @@ class StockPerWarehouseReportPage extends Page implements HasForms
                 'stock_qty2'  => $stock2,
             ];
         }, $reportData);
+    }
+
+    public function exportExcel()
+    {
+        $this->filterReport();
+        $formData = $this->form->getState();
+        $rows = [];
+
+        foreach ($this->stock_report as $index => $item) {
+            $rows[] = [
+                $index + 1,
+                $item['item_code'],
+                $item['bal_qty1'], $item['uom1'], $item['bal_qty2'], $item['uom2'],
+                $item['in_qty1'], $item['uom1'], $item['in_qty2'], $item['uom2'],
+                $item['out_qty1'], $item['uom1'], $item['out_qty2'], $item['uom2'],
+                $item['stock_qty1'], $item['uom1'], $item['stock_qty2'], $item['uom2'],
+            ];
+        }
+
+        return Excel::download(
+            new ReportArrayExport([
+                'No', 'Item Code',
+                'Balance Qty1', 'Balance UOM1', 'Balance Qty2', 'Balance UOM2',
+                'Incoming Qty1', 'Incoming UOM1', 'Incoming Qty2', 'Incoming UOM2',
+                'Outgoing Qty1', 'Outgoing UOM1', 'Outgoing Qty2', 'Outgoing UOM2',
+                'Stock Qty1', 'Stock UOM1', 'Stock Qty2', 'Stock UOM2',
+            ], $rows, 'Stock per Warehouse'),
+            "stock-per-warehouse_{$formData['filter_from']}_{$formData['filter_to']}.xlsx",
+        );
     }
 }

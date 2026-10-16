@@ -30,7 +30,10 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->brandName('') // Kosongkan brandName agar tidak merender fallback teks
             ->colors([
-                'primary' => Color::Emerald,
+                'primary' => array_replace(Color::hex('#0786a3'), [
+                    600 => Color::convertToOklch('#0786a3'),
+                    700 => Color::convertToOklch('#066d83'),
+                ]),
             ])
             // Menampilkan Custom Header/Logo di Topbar Kiri
             ->renderHook(

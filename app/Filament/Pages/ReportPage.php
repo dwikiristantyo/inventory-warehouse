@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Exports\StockMutationExport;
 use App\Models\Item;
 use App\Models\Warehouse;
 use BackedEnum;
@@ -11,6 +12,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
@@ -20,13 +22,14 @@ class ReportPage extends Page implements HasForms
 
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-document-chart-bar';
     protected static string|UnitEnum|null $navigationGroup = 'Reports & Analytics';
-    protected static ?string $navigationLabel = 'Transaction Report';
-    protected static ?string $title = 'Stock Mutation Report';
+    protected static ?string $navigationLabel = 'Egg Stock Report by Item';
+    protected static ?string $title = 'Egg Stock Report by Item';
 
     protected string $view = 'filament.pages.report-page';
 
     public ?array $data = [];
     public array $items_report = [];
+    public bool $hasSearched = false;
 
     public function mount(): void
     {
@@ -39,18 +42,26 @@ class ReportPage extends Page implements HasForms
             'filter_icodes' => ['ALL'],
         ]);
 
-        $this->filterReport();
     }
 
     public function form(Schema $form): Schema
     {
         return $form
             ->schema([
+                DatePicker::make('filter_from')
+                    ->label('Dari Tanggal')
+                    ->required(),
+
+                DatePicker::make('filter_to')
+                    ->label('Sampai Tanggal')
+                    ->required(),
+
                 Select::make('filter_whid')
                     ->label('Gudang / Farm')
                     ->options(Warehouse::pluck('warehouse_name', 'warehouseid'))
                     ->required()
-                    ->native(false),
+                    ->native(false)
+                    ->columnSpanFull(),
 
                 Select::make('filter_icodes')
                     ->label('Pilih Barang')
@@ -60,23 +71,17 @@ class ReportPage extends Page implements HasForms
                     ))
                     ->multiple()
                     ->default(['ALL'])
-                    ->native(false),
-
-                DatePicker::make('filter_from')
-                    ->label('Dari Tanggal')
-                    ->required(),
-
-                DatePicker::make('filter_to')
-                    ->label('Sampai Tanggal')
-                    ->required(),
+                    ->native(false)
+                    ->columnSpanFull(),
             ])
-            ->columns(4)
+            ->columns(2)
             ->statePath('data');
     }
 
     public function filterReport(): void
     {
         $formData     = $this->form->getState();
+        $this->hasSearched = true;
         $filterWhid   = $formData['filter_whid'] ?? null;
         $filterFrom   = $formData['filter_from'] ?? now()->startOfMonth()->toDateString();
         $filterTo     = $formData['filter_to'] ?? now()->toDateString();
@@ -199,5 +204,15 @@ class ReportPage extends Page implements HasForms
                 'final_pcs' => $runningPcs,
             ];
         }
+    }
+
+    public function exportExcel()
+    {
+        $this->filterReport();
+        $formData = $this->form->getState();
+        return Excel::download(
+            new StockMutationExport($this->items_report),
+            "stock-mutation_{$formData['filter_from']}_{$formData['filter_to']}.xlsx",
+        );
     }
 }

@@ -81,8 +81,7 @@ class GoodsOutResource extends Resource
                                 return $uom2 ? "Qty 2 ({$uom2})" : 'Qty 2';
                             })
                             ->numeric()
-                            ->default(0)
-                            ->required(),
+                            ->default(0),
 
                         Components\Hidden::make('uom1_label'),
                         Components\Hidden::make('uom2_label'),

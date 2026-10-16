@@ -19,30 +19,38 @@
         .stock-table {
             width: 100%;
             border-collapse: collapse !important;
-            border: 1px solid #000000 !important;
-            font-size: 11px;
+            border: 1px solid #94a3b8 !important;
+            font-size: 9px;
+            font-variant-numeric: tabular-nums;
         }
 
         .stock-table th, 
         .stock-table td {
-            border: 1px solid #000000 !important;
-            padding: 5px 6px !important;
+            border: 1px solid #cbd5e1 !important;
+            padding: 3px 4px !important;
             box-sizing: border-box;
         }
 
-        /* Warna Header Biru sesuai Gambar Contoh */
+        /* Header colors follow the report reference palette. */
         .stock-table thead th {
-            background-color: #7cb5ec !important;
+            background-color: #B4C6E7 !important;
             color: #000000 !important;
             font-weight: bold;
             text-align: center;
             vertical-align: middle;
         }
 
+        .stock-table thead tr:nth-child(2) th { background-color: #D9E2F3 !important; }
+
         .stock-table tbody td {
             background-color: #ffffff !important;
             color: #000000 !important;
         }
+
+        .stock-table tbody tr:nth-child(even) td { background-color: #f5f8fc !important; }
+        .stock-table tbody tr:hover td { background-color: #eaf3f7 !important; }
+        .stock-table tbody td:nth-child(15),
+        .stock-table tbody td:nth-child(17) { font-weight: bold; }
 
         /* Alignment Utility */
         .stock-table .text-center { text-align: center !important; }
@@ -100,24 +108,32 @@
             .stock-table {
                 width: 100% !important;
             }
+
+            .stock-table tbody tr:nth-child(even) td,
+            .stock-table tbody tr:hover td { background-color: #ffffff !important; }
         }
     </style>
 
-    <form wire:submit="filterReport" class="space-y-4 print:hidden">
+    <form wire:submit="filterReport" class="report-filter-form space-y-6 print:hidden">
         {{ $this->form }}
 
-        <div class="flex gap-3">
-            <x-filament::button type="submit" icon="heroicon-m-magnifying-glass">
-                Preview
+        <div class="flex flex-wrap gap-3" style="margin-top: 16px;">
+            <x-filament::button type="submit" icon="heroicon-m-magnifying-glass" style="background-color: #0786a3; color: #ffffff;">
+                View Report
             </x-filament::button>
 
-            <x-filament::button color="gray" icon="heroicon-m-printer" onclick="window.print()">
-                Print
+            <x-filament::button color="gray" icon="heroicon-m-printer" onclick="window.print()" style="border: 1px solid #d1d5db; background-color: #ffffff; color: #1f2937;">
+                Print Report
+            </x-filament::button>
+
+            <x-filament::button type="button" icon="heroicon-m-arrow-down-tray" wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel" style="background-color: #0786a3; color: #ffffff;">
+                Export to Excel
             </x-filament::button>
         </div>
     </form>
 
-    <div class="report-wrapper">
+    @if ($hasSearched)
+        <div class="report-wrapper">
         <!-- Info Atas Laporan -->
         <div class="report-header-info">
             <div style="font-size: 15px; text-transform: uppercase; margin-bottom: 4px;">REPORT STOCK PER GUDANG</div>
@@ -202,5 +218,6 @@
                 </tbody>
             </table>
         </div>
-    </div>
+        </div>
+    @endif
 </x-filament-panels::page>

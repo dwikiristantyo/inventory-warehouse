@@ -82,8 +82,7 @@ class GoodsInResource extends Resource
                                 return $uom2 ? "Qty 2 ({$uom2})" : 'Qty 2';
                             })
                             ->numeric()
-                            ->default(0)
-                            ->required(),
+                            ->default(0),
 
                         // Dynamic state helpers
                         Components\Hidden::make('uom1_label'),

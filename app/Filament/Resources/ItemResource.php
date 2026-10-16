@@ -98,7 +98,6 @@ class ItemResource extends Resource
 
                 Components\TextInput::make('uom2')
                     ->label('UOM 2 (e.g. Pcs)')
-                    ->required()
                     ->maxLength(50),
             ]);
     }
@@ -123,10 +122,10 @@ class ItemResource extends Resource
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('uom1')
-                    ->label('Satuan 1'),
+                    ->label('UOM 1'),
 
                 Tables\Columns\TextColumn::make('uom2')
-                    ->label('Satuan 2'),
+                    ->label('UOM 2'),
             ])
             ->actions([
                 ViewAction::make(),

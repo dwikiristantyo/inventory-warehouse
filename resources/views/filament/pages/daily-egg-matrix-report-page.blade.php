@@ -2,9 +2,10 @@
     <style>
         .matrix-card {
             background: #ffffff;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 12px;
+            border: 1px solid #dbe3ee;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
             margin-top: 15px;
         }
 
@@ -16,16 +17,17 @@
         table.matrix-table {
             width: 100%;
             border-collapse: collapse !important;
-            font-size: 11px;
+            font-size: 9px;
             white-space: nowrap;
             font-family: Arial, sans-serif;
             color: #000000;
+            font-variant-numeric: tabular-nums;
         }
 
         table.matrix-table th, 
         table.matrix-table td {
             border: 1px solid #000000 !important;
-            padding: 4px 6px !important;
+            padding: 3px 4px !important;
             text-align: right;
         }
 
@@ -42,6 +44,11 @@
 
         .text-center { text-align: center !important; }
         .text-bold { font-weight: bold; }
+
+        .matrix-table tbody tr:nth-child(even) td { background-color: #f5f8fc; }
+        .matrix-table tbody tr:hover td { background-color: #eaf3f7; }
+        .matrix-table tbody td:first-child { background-color: #eef3f8; font-weight: bold; }
+        .matrix-table thead th { border-color: #64748b !important; }
 
         @media print {
             .fi-sidebar,
@@ -83,28 +90,38 @@
 
             .matrix-card {
                 padding: 0 !important;
+                border: 0 !important;
                 box-shadow: none !important;
             }
+
+            .matrix-table tbody tr:nth-child(even) td,
+            .matrix-table tbody tr:hover td,
+            .matrix-table tbody td:first-child { background-color: #ffffff !important; }
         }
     </style>
 
-    <form wire:submit="filterReport" class="space-y-4 print:hidden">
+    <form wire:submit="filterReport" class="report-filter-form space-y-6 print:hidden">
         {{ $this->form }}
 
-        <div class="flex gap-3 mt-3">
-            <x-filament::button type="submit" icon="heroicon-m-magnifying-glass">
-                Tampilkan Data
+        <div class="flex flex-wrap gap-3" style="margin-top: 16px;">
+            <x-filament::button type="submit" icon="heroicon-m-magnifying-glass" style="background-color: #0786a3; color: #ffffff;">
+                View Report
             </x-filament::button>
 
-            <x-filament::button color="gray" icon="heroicon-m-printer" onclick="window.print()">
-                Cetak Laporan
+            <x-filament::button color="gray" icon="heroicon-m-printer" onclick="window.print()" style="border: 1px solid #d1d5db; background-color: #ffffff; color: #1f2937;">
+                Print Report
+            </x-filament::button>
+
+            <x-filament::button type="button" icon="heroicon-m-arrow-down-tray" wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel" style="background-color: #0786a3; color: #ffffff;">
+                Export to Excel
             </x-filament::button>
         </div>
     </form>
 
-    <div class="matrix-card">
-        <div class="matrix-container">
-            <table class="matrix-table">
+    @if ($hasSearched)
+        <div class="matrix-card">
+            <div class="matrix-container">
+                <table class="matrix-table">
                 <thead>
                     <tr class="bg-header-main">
                         <th rowspan="3" style="width: 70px;">Hari / Tgl</th>
@@ -189,7 +206,8 @@
                         </tr>
                     @endforelse
                 </tbody>
-            </table>
+                </table>
+            </div>
         </div>
-    </div>
+    @endif
 </x-filament-panels::page>

@@ -24,6 +24,16 @@ class TransactionDetail extends Model
         'qty_uom2' => 'float',
     ];
 
+    public function setQtyUom1Attribute($value): void
+    {
+        $this->attributes['qty_uom1'] = $value === null || $value === '' ? 0 : $value;
+    }
+
+    public function setQtyUom2Attribute($value): void
+    {
+        $this->attributes['qty_uom2'] = $value === null || $value === '' ? 0 : $value;
+    }
+
     /**
      * Relasi ke TransactionHeader (Inverse / BelongsTo)
      */

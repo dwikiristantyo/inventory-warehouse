@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Exports\DailyEggMatrixExport;
 use App\Models\Warehouse;
 use BackedEnum;
 use DateInterval;
@@ -13,6 +14,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
@@ -29,6 +31,7 @@ class DailyEggMatrixReportPage extends Page implements HasForms
 
     public ?array $data = [];
     public array $daily_data = [];
+    public bool $hasSearched = false;
 
     protected array $salable_icodes = ['EG0001', 'EGG-SALABLE', 'EGG-GRADE-A', 'EGG-GRADE-B'];
     protected array $cull_icodes    = ['EG0002', 'EGG-CULL', 'EGG-AFKIR', 'EGG-CRACK'];
@@ -43,19 +46,12 @@ class DailyEggMatrixReportPage extends Page implements HasForms
             'filter_to'   => now()->toDateString(),
         ]);
 
-        $this->filterReport();
     }
 
     public function form(Schema $form): Schema
     {
         return $form
             ->schema([
-                Select::make('filter_whid')
-                    ->label('Gudang / Farm')
-                    ->options(Warehouse::pluck('warehouse_name', 'warehouseid'))
-                    ->required()
-                    ->native(false),
-
                 DatePicker::make('filter_from')
                     ->label('Dari Tanggal')
                     ->required(),
@@ -63,14 +59,22 @@ class DailyEggMatrixReportPage extends Page implements HasForms
                 DatePicker::make('filter_to')
                     ->label('Sampai Tanggal')
                     ->required(),
+
+                Select::make('filter_whid')
+                    ->label('Gudang / Farm')
+                    ->options(Warehouse::pluck('warehouse_name', 'warehouseid'))
+                    ->required()
+                    ->native(false)
+                    ->columnSpanFull(),
             ])
-            ->columns(3)
+            ->columns(2)
             ->statePath('data');
     }
 
     public function filterReport(): void
     {
         $formData   = $this->form->getState();
+        $this->hasSearched = true;
         $filterWhid = $formData['filter_whid'] ?? null;
         $filterFrom = $formData['filter_from'] ?? now()->startOfMonth()->toDateString();
         $filterTo   = $formData['filter_to'] ?? now()->toDateString();
@@ -257,5 +261,15 @@ class DailyEggMatrixReportPage extends Page implements HasForms
                 'c21','c22','c23','c24','c25','c26','c27','c28','c29','c30'
             );
         }
+    }
+
+    public function exportExcel()
+    {
+        $this->filterReport();
+        $formData = $this->form->getState();
+        return Excel::download(
+            new DailyEggMatrixExport($this->daily_data),
+            "daily-egg-matrix_{$formData['filter_from']}_{$formData['filter_to']}.xlsx",
+        );
     }
 }
