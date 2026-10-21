@@ -28,4 +28,27 @@ class Warehouse extends Model
         // Parameter: (TargetModel, foreign_key, owner_key)
         return $this->belongsTo(Company::class, 'companyid', 'companyid');
     }
+
+    public function getCompanyWarehouseLabelAttribute(): string
+    {
+        $companyAlias = $this->company?->alias;
+
+        return filled($companyAlias)
+            ? "{$companyAlias} - {$this->warehouse_name}"
+            : $this->warehouse_name;
+    }
+
+    /**
+     * @return array<int|string, string>
+     */
+    public static function selectOptions(): array
+    {
+        return static::query()
+            ->with('company')
+            ->get()
+            ->mapWithKeys(fn (self $warehouse): array => [
+                $warehouse->getKey() => $warehouse->company_warehouse_label,
+            ])
+            ->all();
+    }
 }

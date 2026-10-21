@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\GoodsOutResource\Pages;
 use App\Models\Item;
 use App\Models\TransactionHeader;
+use App\Models\Warehouse;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -41,7 +42,12 @@ class GoodsOutResource extends Resource
                     ->default(now())
                     ->required(),
                 Components\Select::make('warehouseid')
-                    ->relationship('warehouse', 'warehouse_name')
+                    ->relationship(
+                        name: 'warehouse',
+                        titleAttribute: 'warehouse_name',
+                        modifyQueryUsing: fn ($query) => $query->with('company')
+                    )
+                    ->getOptionLabelFromRecordUsing(fn (Warehouse $record): string => $record->company_warehouse_label)
                     ->required(),
                 Components\Textarea::make('remark')->columnSpanFull(),
 
@@ -126,7 +132,7 @@ class GoodsOutResource extends Resource
                             ->when($data['until'], fn ($q) => $q->whereDate('trans_date', '<=', $data['until']));
                     }),
                 Tables\Filters\SelectFilter::make('warehouseid')
-                    ->relationship('warehouse', 'warehouse_name'),
+                    ->options(Warehouse::selectOptions()),
             ])
             ->actions([
                 ViewAction::make(),

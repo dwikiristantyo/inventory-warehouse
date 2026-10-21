@@ -66,7 +66,7 @@
                 <section>
                     <h2 class="text-[11px] font-bold uppercase text-gray-900">
                         {{ $item['item_code'] }} - {{ $item['description'] }}
-                        <span class="font-normal normal-case text-gray-600">(UOM 1: {{ $item['uom1'] ?: '-' }})</span>
+                        <span class="font-normal normal-case text-gray-600">(UOM: {{ $item['uom1'] ?: '-' }})</span>
                     </h2>
 
                     <div class="overflow-x-auto" style="margin-top: 6px;">
@@ -75,11 +75,11 @@
                                 <tr>
                                     <th>Date</th>
                                     <th>Remark</th>
-                                    <th>Opening Qty 1</th>
-                                    <th>Incoming Qty 1</th>
-                                    <th>Outgoing Qty 1</th>
-                                    <th>Adjustment Qty 1</th>
-                                    <th>Ending Stock Qty 1</th>
+                                    <th>Opening Qty</th>
+                                    <th>Incoming Qty</th>
+                                    <th>Outgoing Qty</th>
+                                    <th>Adjustment Qty</th>
+                                    <th>Ending Stock Qty</th>
                                 </tr>
                             </thead>
                             <tbody>

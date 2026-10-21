@@ -1,8 +1,17 @@
 <x-filament-panels::page>
     <style>
+        .stock-warehouse-panel,
+        .stock-warehouse-table {
+            width: 100%;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 9px;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
         .stock-warehouse-panel {
             background: #fff;
-            border: 1px solid #dbe3ee;
+            border: 1px solid #cbd5e1;
             border-radius: 6px;
             box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
             padding: 12px;
@@ -10,10 +19,31 @@
 
         .stock-warehouse-heading {
             color: #111827;
-            font: 700 13px Arial, Helvetica, sans-serif;
+            font: 700 11px Arial, Helvetica, sans-serif;
             line-height: 1.5;
             margin-bottom: 10px;
         }
+
+        .stock-warehouse-table {
+            border-collapse: collapse;
+        }
+
+        .stock-warehouse-table th,
+        .stock-warehouse-table td {
+            border: 1px solid #cbd5e1;
+            padding: 4px 5px;
+        }
+
+        .stock-warehouse-table thead th {
+            background: #b4c6e7;
+            color: #111827;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .stock-warehouse-table tbody tr:nth-child(even) { background: #f5f8fc; }
+        .stock-warehouse-table tbody tr:hover { background: #eaf3f7; }
+        .stock-warehouse-number { text-align: right; }
 
         .stock-warehouse-table th:last-child,
         .stock-warehouse-table td:last-child { font-weight: 700; }
@@ -58,12 +88,12 @@
                             <th>No</th>
                             <th>Item Code</th>
                             <th>Description</th>
-                            <th>UOM 1</th>
-                            <th>Opening Balance Qty 1</th>
-                            <th>Incoming Qty 1</th>
-                            <th>Outgoing Qty 1</th>
-                            <th>Adjustment Qty 1</th>
-                            <th>Ending Stock Qty 1</th>
+                            <th>UOM</th>
+                            <th>Opening Balance Qty</th>
+                            <th>Incoming Qty</th>
+                            <th>Outgoing Qty</th>
+                            <th>Adjustment Qty</th>
+                            <th>Ending Stock Qty</th>
                         </tr>
                     </thead>
                     <tbody>

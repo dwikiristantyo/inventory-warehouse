@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\LockPeriodResource\Pages;
 use App\Models\LockPeriod;
+use App\Models\Warehouse;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -29,7 +30,12 @@ class LockPeriodResource extends Resource
         return $schema
             ->components([
                 Components\Select::make('warehouseid')
-                    ->relationship('warehouse', 'warehouse_name')
+                    ->relationship(
+                        name: 'warehouse',
+                        titleAttribute: 'warehouse_name',
+                        modifyQueryUsing: fn ($query) => $query->with('company')
+                    )
+                    ->getOptionLabelFromRecordUsing(fn (Warehouse $record): string => $record->company_warehouse_label)
                     ->required(),
 
                 Components\Select::make('year')
@@ -114,7 +120,7 @@ class LockPeriodResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('warehouseid')
-                    ->relationship('warehouse', 'warehouse_name'),
+                    ->options(Warehouse::selectOptions()),
 
                 Tables\Filters\SelectFilter::make('year')
                     ->options(array_combine(range(date('Y') - 5, date('Y') + 5), range(date('Y') - 5, date('Y') + 5))),

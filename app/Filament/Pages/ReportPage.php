@@ -58,7 +58,7 @@ class ReportPage extends Page implements HasForms
 
                 Select::make('filter_whid')
                     ->label('Gudang / Farm')
-                    ->options(Warehouse::pluck('warehouse_name', 'warehouseid'))
+                    ->options(Warehouse::selectOptions())
                     ->required()
                     ->native(false)
                     ->columnSpanFull(),

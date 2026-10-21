@@ -6,6 +6,7 @@ use UnitEnum;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
 use App\Models\Company;
+use App\Models\Warehouse;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -175,7 +176,12 @@ class UserResource extends Resource
 
                         Select::make('warehouses')
                             ->label('Akses Gudang / Warehouse')
-                            ->relationship('warehouses', 'warehouse_name')
+                            ->relationship(
+                                name: 'warehouses',
+                                titleAttribute: 'warehouse_name',
+                                modifyQueryUsing: fn (Builder $query) => $query->with('company')
+                            )
+                            ->getOptionLabelFromRecordUsing(fn (Warehouse $record): string => $record->company_warehouse_label)
                             ->multiple()
                             ->preload()
                             ->searchable()

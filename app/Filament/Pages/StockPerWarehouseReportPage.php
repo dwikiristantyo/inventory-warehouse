@@ -58,7 +58,7 @@ class StockPerWarehouseReportPage extends Page implements HasForms
 
                 Select::make('filter_whid')
                     ->label('Select Warehouse')
-                    ->options(Warehouse::pluck('warehouse_name', 'warehouseid'))
+                    ->options(Warehouse::selectOptions())
                     ->required()
                     ->native(false)
                     ->columnSpanFull(),

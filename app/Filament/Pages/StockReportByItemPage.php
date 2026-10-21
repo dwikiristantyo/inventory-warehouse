@@ -49,7 +49,7 @@ class StockReportByItemPage extends Page implements HasForms
                 DatePicker::make('filter_to')->label('To Date')->required(),
                 Select::make('filter_whid')
                     ->label('Select Warehouse')
-                    ->options(Warehouse::pluck('warehouse_name', 'warehouseid'))
+                    ->options(Warehouse::selectOptions())
                     ->required()
                     ->native(false)
                     ->columnSpanFull(),
@@ -183,7 +183,7 @@ class StockReportByItemPage extends Page implements HasForms
         }
 
         return Excel::download(
-            new ReportArrayExport(['Item Code', 'Description', 'UOM 1', 'Date', 'Remark', 'Opening Qty 1', 'Incoming Qty 1', 'Outgoing Qty 1', 'Adjustment Qty 1', 'Ending Stock Qty 1'], $rows, 'Stock by Item'),
+            new ReportArrayExport(['Item Code', 'Description', 'UOM', 'Date', 'Remark', 'Opening Qty', 'Incoming Qty', 'Outgoing Qty', 'Adjustment Qty', 'Ending Stock Qty'], $rows, 'Stock by Item'),
             "stock-report-by-item_{$formData['filter_from']}_{$formData['filter_to']}.xlsx",
         );
     }
