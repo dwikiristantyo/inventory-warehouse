@@ -25,6 +25,11 @@ class StockReportByItemPage extends Page implements HasForms
     protected static ?string $navigationLabel = 'Stock Report by Item';
     protected static ?string $title = 'Stock Report by Item';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasMenuAccess(14) ?? false;
+    }
+
     protected string $view = 'filament.pages.stock-report-by-item-page';
 
     public ?array $data = [];

@@ -24,6 +24,11 @@ class StockPerWarehouseReportPage extends Page implements HasForms
     protected static ?string $navigationLabel = 'Egg Stock Report By Warehouse';
     protected static ?string $title = 'Egg Stock Report By Warehouse';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasMenuAccess(2) ?? false;
+    }
+
     protected string $view = 'filament.pages.stock-per-warehouse-report-page';
 
     public ?array $data = [];

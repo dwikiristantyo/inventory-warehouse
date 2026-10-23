@@ -74,19 +74,17 @@ class GoodsInResource extends Resource
                             }),
 
                         Components\TextInput::make('qty_uom1')
-                            ->label(function (Get $get) {
-                                $uom1 = $get('uom1_label');
-                                return $uom1 ? "Qty 1 ({$uom1})" : 'Qty 1';
-                            })
+                            ->label('Qty 1')
+                            ->suffix(fn (Get $get): ?string => $get('uom1_label')
+                                ?: Item::where('item_code', $get('item_code'))->value('uom1'))
                             ->numeric()
                             ->default(0)
                             ->required(),
 
                         Components\TextInput::make('qty_uom2')
-                            ->label(function (Get $get) {
-                                $uom2 = $get('uom2_label');
-                                return $uom2 ? "Qty 2 ({$uom2})" : 'Qty 2';
-                            })
+                            ->label('Qty 2')
+                            ->suffix(fn (Get $get): ?string => $get('uom2_label')
+                                ?: Item::where('item_code', $get('item_code'))->value('uom2'))
                             ->numeric()
                             ->default(0),
 

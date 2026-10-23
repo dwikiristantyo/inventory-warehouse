@@ -27,6 +27,11 @@ class DailyEggMatrixReportPage extends Page implements HasForms
     protected static ?string $navigationLabel = 'Daily Egg Matrix Report';
     protected static ?string $title = 'Daily Egg Matrix Report';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasMenuAccess(16) ?? false;
+    }
+
     protected string $view = 'filament.pages.daily-egg-matrix-report-page';
 
     public ?array $data = [];

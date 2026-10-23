@@ -25,6 +25,11 @@ class ReportPage extends Page implements HasForms
     protected static ?string $navigationLabel = 'Egg Stock Report by Item';
     protected static ?string $title = 'Egg Stock Report by Item';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasMenuAccess(1) ?? false;
+    }
+
     protected string $view = 'filament.pages.report-page';
 
     public ?array $data = [];

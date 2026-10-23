@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Models\Company;
 use App\Models\Warehouse;
 use Filament\Schemas\Schema;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Resource;

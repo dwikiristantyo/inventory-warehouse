@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use UnitEnum;
 use App\Filament\Resources\UserGroupResource\Pages;
+use App\Models\Menu;
 use App\Models\UserGroup;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
@@ -58,6 +59,25 @@ class UserGroupResource extends Resource
                                 Select::make('menu_id')
                                     ->label('Menu')
                                     ->relationship('menu', 'name')
+                                    ->getOptionLabelFromRecordUsing(fn (Menu $record): string => match ($record->route) {
+                                        'filament.admin.pages.report-page' => 'Egg Stock Report by Item',
+                                        'filament.admin.pages.stock-per-warehouse-report-page' => 'Egg Stock Report By Warehouse',
+                                        'filament.admin.resources.adjustments.index' => 'Adjustment',
+                                        'filament.admin.resources.goods-ins.index' => 'Goods In',
+                                        'filament.admin.resources.goods-outs.index' => 'Goods Out',
+                                        'filament.admin.resources.lock-periods.index' => 'Lock Period',
+                                        'filament.admin.resources.categories.index' => 'Category',
+                                        'filament.admin.resources.items.index' => 'Item',
+                                        'filament.admin.resources.warehouses.index' => 'Warehouse',
+                                        'filament.admin.resources.companies.index' => 'Company',
+                                        'filament.admin.resources.user-groups.index' => 'User Group',
+                                        'filament.admin.resources.users.index' => 'User',
+                                        'filament.admin.pages.dashboard' => 'Dashboard',
+                                        'filament.admin.pages.stock-report-by-item-page' => 'Stock Report by Item',
+                                        'filament.admin.pages.stock-report-by-warehouse-page' => 'Stock Report by Warehouse',
+                                        'filament.admin.pages.daily-egg-matrix-report-page' => 'Daily Egg Matrix Report',
+                                        default => $record->name,
+                                    })
                                     ->required()
                                     ->distinct()
                                     ->disableOptionsWhenSelectedInSiblingRepeaterItems(),

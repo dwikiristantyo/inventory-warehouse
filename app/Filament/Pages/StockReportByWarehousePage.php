@@ -24,6 +24,11 @@ class StockReportByWarehousePage extends Page implements HasForms
     protected static ?string $navigationLabel = 'Stock Report by Warehouse';
     protected static ?string $title = 'Stock Report by Warehouse';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasMenuAccess(15) ?? false;
+    }
+
     protected string $view = 'filament.pages.stock-report-by-warehouse-page';
 
     public ?array $data = [];
