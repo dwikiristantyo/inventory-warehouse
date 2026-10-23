@@ -84,6 +84,18 @@ class User extends Authenticatable implements HasName
             ->exists();
     }
 
+    public function canApproveItemRequests(): bool
+    {
+        if ((int) $this->usergroupid === 1) {
+            return true;
+        }
+
+        return $this->groupDetails()
+            ->where('menu_id', '5')
+            ->where('can_add', true)
+            ->exists();
+    }
+
     /**
      * Relasi ke model Company (Tabel pivot: user_companies)
      */
