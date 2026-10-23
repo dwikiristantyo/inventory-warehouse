@@ -101,7 +101,7 @@ class GoodsInResource extends Resource
     {
         return $table
             ->query(TransactionHeader::query()->where('trans_type', 'IN')->where('status', '!=', 'X'))
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('trans_date', 'desc')
             ->paginated([30, 50, 100, 'all'])
             ->columns([
                 Tables\Columns\TextColumn::make('trans_no')->searchable()->sortable(),
