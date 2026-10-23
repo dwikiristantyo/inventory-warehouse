@@ -91,6 +91,16 @@ class StockReportByItemPage extends Page implements HasForms
             $itemsQuery->whereIn('item_code', $itemCodes);
         }
 
+        $itemsQuery->whereExists(function ($query) use ($warehouseId) {
+            $query->select(DB::raw(1))
+                ->from('transaction_details as td')
+                ->join('transaction_headers as th', 'th.trans_id', '=', 'td.trans_id')
+                ->whereColumn('td.item_code', 'items.item_code')
+                ->where('th.warehouseid', $warehouseId)
+                ->where('th.status', '!=', 'X')
+                ->whereIn('th.trans_type', ['IN', 'OUT', 'ADJ']);
+        });
+
         $transactions = "
             SELECT m.trans_date, m.warehouseid AS whid, d.item_code AS icode, d.qty_uom1 AS qty, 'IN' AS type, m.trans_id, m.remark
             FROM transaction_headers m JOIN transaction_details d ON m.trans_id = d.trans_id

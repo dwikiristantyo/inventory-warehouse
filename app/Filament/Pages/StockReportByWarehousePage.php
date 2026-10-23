@@ -109,7 +109,7 @@ class StockReportByWarehousePage extends Page implements HasForms
                 COALESCE(SUM(CASE WHEN t.trans_date BETWEEN ? AND ? AND t.type = 'OUT' THEN t.qty1 ELSE 0 END), 0) AS outgoing_qty,
                 COALESCE(SUM(CASE WHEN t.trans_date BETWEEN ? AND ? AND t.type = 'ADJ' THEN t.qty1 ELSE 0 END), 0) AS adjustment_qty
             FROM items i
-            LEFT JOIN ({$transactions}) t ON i.item_code = t.icode AND t.whid = ?
+            INNER JOIN ({$transactions}) t ON i.item_code = t.icode AND t.whid = ?
             GROUP BY i.item_code, i.description, i.uom1
             ORDER BY i.item_code ASC
         ", [

@@ -96,14 +96,6 @@
                                         </tr>
                                     @endforeach
 
-                                    @if (count($entries) > 0 && ($entries[0]['type'] ?? '') !== 'INIT')
-                                        @php($dayEnding = $entries[array_key_last($entries)])
-                                        <tr style="background: #fff2cc; font-weight: 700;">
-                                            <td>{{ date('d-m-Y', strtotime($date)) }}</td>
-                                            <td colspan="5" style="text-align: center;">DAILY ENDING STOCK</td>
-                                            <td class="stock-item-number">{{ number_format($dayEnding['ending_stock'], 2) }}</td>
-                                        </tr>
-                                    @endif
                                 @endforeach
                             </tbody>
                             <tfoot>
