@@ -141,7 +141,8 @@ class StockPerWarehouseReportPage extends Page implements HasForms
                 COALESCE(SUM(CASE WHEN t.trans_date BETWEEN ? AND ? AND t.type = 'ADJ' THEN t.qty2 ELSE 0 END), 0) AS adj_qty2
 
             FROM items i
-            LEFT JOIN ({$unionQuery}) t ON i.item_code = t.icode AND t.whid = ?
+            INNER JOIN ({$unionQuery}) t ON i.item_code = t.icode AND t.whid = ?
+            WHERE i.category_code = 'EG'
             GROUP BY i.item_code, i.description, i.uom1, i.uom2
             ORDER BY i.item_code ASC
         ", [

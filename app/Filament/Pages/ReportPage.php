@@ -72,7 +72,7 @@ class ReportPage extends Page implements HasForms
                     ->label('Pilih Barang')
                     ->options(array_merge(
                         ['ALL' => '-- SEMUA BARANG --'],
-                        Item::pluck('description', 'item_code')->toArray()
+                        Item::where('category_code', 'EG')->orderBy('item_code')->pluck('description', 'item_code')->toArray()
                     ))
                     ->multiple()
                     ->default(['ALL'])
@@ -102,7 +102,7 @@ class ReportPage extends Page implements HasForms
         }
 
         // Fetch master items
-        $queryItems = Item::query();
+        $queryItems = Item::query()->where('category_code', 'EG');
         if (! in_array('ALL', $filterIcodes) && ! empty($filterIcodes)) {
             $queryItems->whereIn('item_code', $filterIcodes);
         }

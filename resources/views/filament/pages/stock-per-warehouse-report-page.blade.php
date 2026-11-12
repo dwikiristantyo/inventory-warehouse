@@ -211,7 +211,7 @@
                     @empty
                         <tr>
                             <td colspan="18" class="text-center" style="padding: 15px !important;">
-                                Tidak ada data stok untuk gudang dan periode ini.
+                                Data not found.
                             </td>
                         </tr>
                     @endforelse
